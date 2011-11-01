@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-#coding: utf-8
+import simplejson as json
+import re
+
+from psh_manager_online import handler
+from psh_manager_online.psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, Vazbywikipedia, SysNumber
+
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from psh_manager_online.psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, Vazbywikipedia, SysNumber
-import simplejson as json
 from django.conf import settings
-import re
-from psh_manager_online import handler
 
 conceptTable = u"""
             <table>
@@ -63,9 +64,11 @@ conceptTable = u"""
 
 
 def index(request):
+   """Returns main site"""
    return render_to_response("index.html", {})
             
 def getSubjectByHash(request, subjectID):
+    """Return HTML representation of subject according to given PSH ID"""
     try:
         subject = open("".join([settings.ROOT, "/static/subjects/", subjectID, ".html"]), "r")
         concept = subject.read()
@@ -75,6 +78,7 @@ def getSubjectByHash(request, subjectID):
         return render_to_response("index.html", {'concept': getConceptFromDB(subjectID)})
     
 def suggest(request):
+    """Return suggested labels according to given text input and language selector"""
     try:
         if request.POST["en"] == "inactive":
             hesla = Hesla.objects.filter(heslo__istartswith=request.POST["input"])
@@ -119,6 +123,7 @@ def suggest(request):
         return HttpResponse(str(e))
 
 def getSearchResult(request):
+    """Return HTML site with search results to given text input and language selector"""
     try:
         substring = request.POST['substring']
         english = request.POST['english']
@@ -158,10 +163,12 @@ def getSearchResult(request):
         return HttpResponse(str(e))
         
 
-def bold(substring, subject):
-    return re.sub(substring, "".join(["<b>", substring, "</b>"]), subject)
+def bold(substring, text):
+    """Boldify substring within a given text"""
+    return re.sub(substring, "".join(["<b>", substring, "</b>"]), text)
 
 def getID(request):
+    """Get PSH ID for given text label (translate alternative label to preferred label)"""
     if request.POST["en"] == 'inactive':
         try:
             id = Hesla.objects.get(heslo=request.POST["input"]).id_heslo
@@ -182,12 +189,14 @@ def getID(request):
     return HttpResponse(id)
 
 def getConcept(request):
+    """Interface for subject retrieval"""
     if request.POST["subjectID"]:
         return HttpResponse(getConceptFromDB(request.POST["subjectID"]))
     else:
         return HttpResponse("POST request did not contain subjectID value")
 
 def getConceptFromDB(subjectID):
+        """Get concept form database according to its PSH ID"""
         none = "<li>-</li>"
         try:
             heslo = Hesla.objects.get(id_heslo=subjectID)
@@ -243,6 +252,7 @@ def getConceptFromDB(subjectID):
             return str(e)
     
 def getWikipediaLink(request):
+    """Check for wikipedia link"""
     subjectID = request.POST["subjectID"]
     try:
         link = Vazbywikipedia.objects.get(id_heslo=subjectID)
@@ -251,6 +261,7 @@ def getWikipediaLink(request):
         return HttpResponse(str(e))
 
 def saveWikipediaLink(request):
+    """Save wikipedia link"""
     subjectID = request.POST["subjectID"]
     try:
         heslo = Hesla.objects.get(id_heslo=subjectID)
@@ -261,5 +272,6 @@ def saveWikipediaLink(request):
         return HttpResponse(str(e))
 
 def update(request):
+    """Update trigger"""
     handler.update()
     return render_to_response('update.html', {})
