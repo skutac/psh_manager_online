@@ -1,0 +1,374 @@
+/*@font-face {  
+  font-family: "Univers55";
+  src: url("../fonts/UniversCom-55Roman.ttf");
+}
+
+@font-face {  
+  font-family: "Univers55";
+  src: url("../fonts/UniversCom-65Bold.ttf");
+  font-weight: bold;
+}
+@font-face {
+    font-family: "Univers55";
+    src: url("../fonts/UniversCom-45Light.ttf");
+    font-style: italic;
+}*/
+
+body{
+width: 95%;
+margin: auto;
+display: block;
+font-family: Univers55, times, sans-serif;
+}
+
+#mainTree li{
+/*background-color: #EDE8EA;
+border-radius: 8px;
+-moz-border-radius: 8px;*/
+/* padding-bottom: 4px; */
+padding-top: 4px;
+padding-left: 25px;
+/* width: 90%; */
+}
+
+
+#mainTree, .level-1, .level-2, .level-3, .level-4, .level-5, .level-6{
+background-color: #EDE8EA;
+border-radius: 15px;
+-moz-border-radius: 15px;
+padding-left: 10px;
+padding-top: 10px;
+padding-right: 10px;
+}
+
+.level-1{
+background-color: #DBD7D9;
+}
+
+.level-2{
+background-color: #C4BEC1;
+}
+
+.level-3{
+background-color: #B8B2B4;
+}
+
+.level-4{
+background-color: #ADA5A8;
+}
+
+.level-5{
+background-color: #A39D9F;
+}
+
+.level-6{
+background-color: #969294;
+}
+
+#gradient-top, #gradient-bottom{
+position: fixed;
+width: 350px;
+height: 20px;
+}
+
+#gradient-top{
+background-image: -webkit-gradient(
+linear, left top, left bottom, from(rgba(255,255,255,1)),
+to(rgba(255,255,255,0.1)), color-stop(.5,#FFFFFF)
+);
+
+background-image: -moz-linear-gradient(
+rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.1) 95%
+);
+}
+
+#gradient-bottom{
+background-image: -webkit-gradient(
+linear, left top, left bottom, from(rgba(255,255,255,0.1)),
+to(rgba(255,255,255,1)), color-stop(.5,#FFFFFF)
+);
+}
+
+#nav{
+height: 50px;
+position: fixed;
+top: 0px;
+background-color: white;
+padding-bottom: 15px;
+width: 95%;
+border-bottom: solid gray 1px;
+}
+
+#cacheList{
+padding: 0;
+padding-left: 40px;
+margin-top: 10px;
+list-style-type: square;
+float: left;
+font-style: italic;
+font-size: 8px;
+}
+
+#cacheList li{
+font-size: small;
+margin: 0;
+padding: 0;
+color: gray;
+
+}
+
+#content{
+margin-top: 90px;
+}
+
+#concept{
+/* position: fixed; */
+width: 60%;
+margin-left: 33%;
+margin-top: 15px;
+}
+
+#narrower, #related, #broader, #searchResult{
+/* list-style-image: url('../img/1.gif'); */
+padding-left: 30px;
+}
+
+.clickable{
+list-style-image: url('../img/1.gif');
+}
+
+#scrollDiv{
+overflow-x: hidden;
+font-weight: normal;
+margin-right: 40px;
+margin-top: 0px;
+float: left;
+width: 350px;
+border-right: solid gray 1px;
+position: fixed;
+}
+
+#scrollable{
+overflow: auto;
+width: 350px;
+padding-right: 20px; 
+}
+
+#logoNTK, #logoPSH{
+float:right;
+margin-right: 20px;
+padding-top: 15px;
+}
+
+#logoWikipedia{
+float:right;
+margin-right: 20px;
+padding-top: 10px;
+}
+
+.inactive:hover{
+cursor: default;
+}
+
+#katalog, #new_subject, #marc_format{
+padding-top: 8px;
+margin-left: 20px;
+float: left;
+}
+
+
+#english{
+padding-top: 17px;
+opacity: 0.2;
+margin-left: 10px;
+margin-right: 20px;
+float: left;
+}
+
+#english:hover{
+cursor: pointer;
+}
+
+#search{
+float: left;
+padding-top: 15px;
+padding-left: 15px;
+background-color: white;
+}
+
+#pshSuggest{
+width: 250px;
+font-size: 14px;
+padding-left: 5px;
+}
+
+#searchTitle{
+color: gray;
+font-size: small;
+font-style: italic;
+}
+
+img{
+border: none;
+}
+
+img:hover{
+opacity: 0.5;
+}
+
+#titleCS{
+font-size:xx-large;
+}
+
+#acronym{
+font-size: small;
+margin-left: 3px;
+}
+
+#titleEN{
+font-size: x-large;
+font-style: italic;
+}
+
+.title{
+margin-top: 10px;
+font-size: large;
+font-weight: bolder;
+}
+
+ul{
+list-style-type: none;
+/* padding-left: 15px; */
+}
+
+table table{
+width: 100%;
+}
+
+#pshID{
+font-size: small;
+font-weight: bold;
+font-style: italic;
+color: #ADA6A8;
+}
+
+td{
+width: 33%;
+vertical-align:text-top;
+padding-left: 15px;
+}
+
+tr{
+border-bottom: solid black 10px;
+}
+
+table ul{
+border-radius: 15px;
+-moz-border-radius: 15px;
+background-color: #EDE8EA;
+padding-top: 10px;
+padding-bottom: 10px;
+padding-left: 20px;
+}
+
+#searchResult{
+border-radius: 15px;
+-moz-border-radius: 15px;
+background-color: #EDE8EA;
+width: 50%;
+padding-top: 10px;
+padding-bottom: 10px;
+}
+
+li{
+margin-top: 5px;
+}
+
+#suggestedSubjects{
+position: absolute;
+background-color: white;
+}
+
+.unwrap{
+background-image: url(../img/1.png);
+background-repeat: no-repeat;
+background-position: 7px;
+/* padding-left: 20px; */
+}
+
+.hidden{
+display:none;
+}
+
+.show{
+display: block;
+}
+
+.cache:hover, .heslo:hover, .clickable:hover{
+cursor: pointer;
+font-weight: bold;
+}
+
+
+* jQuery UI Autocomplete 1.8.10
+ *
+ * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Autocomplete#theming
+ */
+.ui-autocomplete { position: absolute; cursor: default; }	
+
+/* workarounds */
+* html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+
+/*
+ * jQuery UI Menu 1.8.10
+ *
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Menu#theming
+ */
+.ui-menu {
+	list-style:none;
+	display:block;
+	float: left;
+        background-color: white;
+        border-left: solid #7A7778 1px;
+        border-right: solid #7A7778 1px;
+        border-bottom: solid #7A7778 1px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        padding:0;
+        font-size: 13px;
+        cursor: pointer;
+}
+.ui-menu .ui-menu {
+	margin-top: -3px;
+}
+.ui-menu .ui-menu-item {
+        padding-bottom: 2px;
+	zoom: 1;
+	float: left;
+	clear: left;
+	width: 100%;
+}
+.ui-menu .ui-menu-item a {
+	text-decoration:none;
+	display:block;
+        padding-left: 8px;
+	zoom:1;
+        color: #8C8889;
+}
+.ui-menu .ui-menu-item a.ui-state-hover,
+.ui-menu .ui-menu-item a.ui-state-active {
+	font-weight: bolder;
+        background-color: #E3DEE0;
+        border-left: solid #7A7778 1px;
+        border-right: solid #7A7778 1px;
+	margin: -1px;
+}
+

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="scrollDiv">
+    <div id="scrollable">
+    <div id="gradient-top"></div>
+    	<ul id="mainTree">
+        </ul>
+<!--     <div id="gradient-bottom"></div> -->
+    </div>
+</div>
+<div id="concept">{% autoescape off %}{{ concept }}{% endautoescape %}</div>
+<div id="wikipedia"></div>
+{% endblock %}

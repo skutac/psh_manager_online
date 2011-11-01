@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<ul id="mainTree">
+{% for concept in topConcepts %}
+<li id="{{ concept.id_heslo }}" class="heslo">{{ concept.heslo }}</li>
+{% endfor %}
+</ul>
+<table id="concept"></table>
+{% endblock %}
