@@ -77,3 +77,6 @@ class Vazbywikipedia(models.Model):
     class Meta:
         db_table = u'vazbywikipedia'
 
+class Aktualizace(models.Model):
+    datum_cas = models.DateTimeField(auto_now=True, auto_now_add=True)
+

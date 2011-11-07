@@ -114,7 +114,23 @@ font-size: small;
 margin: 0;
 padding: 0;
 color: gray;
+}
 
+#last_update{
+position: fixed;
+top: 66px;
+right: 50px;
+width: 95%;
+height: 20px;
+background-color: white;
+text-align: right;
+/* border-top: gray solid 1px; */
+color: gray;
+font-size: small;
+font-style: italic;
+/* border-radius: 10px; */
+/* padding-left: 15px; */
+padding-top: 5px;
 }
 
 #content{

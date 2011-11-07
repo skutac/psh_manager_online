@@ -3,7 +3,7 @@ import simplejson as json
 import re
 
 from psh_manager_online import handler
-from psh_manager_online.psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, Vazbywikipedia, SysNumber
+from psh_manager_online.psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, Vazbywikipedia, SysNumber, Aktualizace
 
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -65,7 +65,8 @@ conceptTable = u"""
 
 def index(request):
    """Returns main site"""
-   return render_to_response("index.html", {})
+   date_time = Aktualizace.objects.order_by("-datum_cas")[0].datum_cas
+   return render_to_response("index.html", {"datetime":date_time})
             
 def getSubjectByHash(request, subjectID):
     """Return HTML representation of subject according to given PSH ID"""
