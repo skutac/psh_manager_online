@@ -2,7 +2,7 @@ var currentSuggested = $('#suggestedSubjects li.hidden');
 var screenheight = screen.height;
 $(document).ready(function(){
     $('#scrollDiv, #scrollable').css('height', (screenheight-200));
-    $('#mainTree').load('/psh_manager_online/static/html/tree.html', function(){
+    $('#mainTree').load('static/html/tree.html', function(){
         var test = $('#pshID').text();
         if(test.length == 0){
             getConcept("PSH1");
