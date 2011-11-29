@@ -167,7 +167,8 @@ def updatePSH(all):
                 translateLabel(subject["id"])
 
         translateLabels()
-        createTree() 
+        createTree()
+        make_skos() 
     
 def getSubject(num):
     """Gets record subject from server according to its number"""
@@ -585,4 +586,3 @@ def make_skos():
 
 if __name__ == "__main__":
     update()
-    make_skos()
