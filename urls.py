@@ -5,7 +5,7 @@ import os
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns('psh_manager_online',
     # Example:
     # (r'^psh_manager_online/', include('psh_manager_online.foo.urls')),
 

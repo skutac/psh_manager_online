@@ -29,11 +29,11 @@ $(document).ready(function(){
         if(test.get(0).nodeName == 'UL'){
         if(test.is(":visible")){
             test.slideUp('slow');
-            $(this).css('background-image', 'url(/psh_manager_online/static/img/1.png)');
+            $(this).css('background-image', 'url(static/img/1.png)');
         }
         else{
             test.slideDown('slow');
-            $(this).css('background-image', 'url(/psh_manager_online/static/img/1_down.png)');
+            $(this).css('background-image', 'url(static/img/1_down.png)');
         }
       }}
       highlight(current);
@@ -49,7 +49,7 @@ $("#search").delegate('#pshSuggest', 'keyup', function(event){
             getSuggestedSubject(subject);
         }
         $.ajax({type : "POST",
-               url : "/psh_manager_online/suggest",
+               url : "suggest",
                datatype: "json",
                success: function(data){
                       $("#pshSuggest").autocomplete({source: data});},
@@ -66,7 +66,7 @@ $("#search").delegate('#pshSuggest', 'keyup', function(event){
 function getSuggestedSubject(subject){
     var english = $('#english').attr('class');
     $.ajax({type : "POST",
-               url : "/psh_manager_online/getID",
+               url : "getID",
                success: function(subjectID){
                         if(subjectID == "None"){
                             $('#pshSuggest').val("");
@@ -88,7 +88,7 @@ function getSuggestedSubject(subject){
 
 function getSearchResult(subject, english){
     $.ajax({type : 'POST',
-              url : '/psh_manager_online/getSearchResult', 
+              url : 'getSearchResult', 
               success: function(subjects){
 //                        $('#concept').html(concept).hide();
                           $('#concept').html(subjects);
@@ -173,7 +173,7 @@ function highlight(li){
 
 function getConcept(subjectID){
     $.ajax({type : 'POST',
-              url : '/psh_manager_online/getConcept', 
+              url : 'getConcept', 
               success: function(concept){
                        $('#concept').html(concept).hide();
                        checkWikipedia(subjectID);
@@ -189,13 +189,13 @@ function unwrap(current){
       $(current).parents().show('slow');
       $(current).parents('ul').each(function(){
 //       $(this).show('slow');
-      $(this).prev('li').css('background-image', 'url(/psh_manager_online/static/img/1_down.png)');
+      $(this).prev('li').css('background-image', 'url(static/img/1_down.png)');
       });
       if(test.get(0) != undefined){ 
         if(test.get(0).nodeName == 'UL'){
         if(test.is(":hidden")){
             test.slideDown('slow');
-            $(current).css('background-image', 'url(/psh_manager_online/static/img/1_down.png)');
+            $(current).css('background-image', 'url(static/img/1_down.png)');
         }
       }}
      return false; 
@@ -210,7 +210,7 @@ function checkWikipedia(subjectID){
       logoWikipedia.css('opacity', '0.3');
       
       $.ajax({type: 'POST',
-              url: '/psh_manager_online/wikipedia',
+              url: 'wikipedia',
               data : {subjectID: subjectID},
               success: function(msg){
 //                   console.log("---- Get wikipedia link:" + msg + " ----");
@@ -241,7 +241,7 @@ function checkWikipedia(subjectID){
 function saveWikipediaLink(subjectID){
 //     console.log("---- Saving wikipedia link: " + subjectID + " ----");
     $.ajax({type: 'POST',
-            url: '/psh_manager_online/saveWikipediaLink',
+            url: 'saveWikipediaLink',
             success: function(msg){
 //                 console.log(msg);
             },
