@@ -94,7 +94,7 @@ def createTree():
    
    for concept in concepts:
       print "---- Top concept:", concept.id_heslo, "----"
-      tree.append("".join(['<li class="heslo unwrap" id="', concept.id_heslo, '"><a href="', concept.id_heslo,'" class="ajax">',  concept.heslo, '</a></li>\n']))
+      tree.append("".join(['<li class="heslo unwrap" id="', concept.id_heslo, '">',  concept.heslo, '</li>\n']))
       chunk = getTree(concept.id_heslo)
       if chunk:
 	tree.append(chunk)
@@ -121,9 +121,9 @@ def getTree(subjectID, level=1):
 	  
 	  for obj in hesla:
 	      if len(Hierarchie.objects.filter(nadrazeny=obj.id_heslo)):
-                  current.append("".join(['<li class="heslo unwrap" id="', obj.id_heslo, '"><a href="', obj.id_heslo,'" class="ajax">',  obj.heslo, '</a></li>\n']))
+                  current.append("".join(['<li class="heslo unwrap" id="', obj.id_heslo, '">',  obj.heslo, '</li>\n']))
 	      else:
-                  current.append("".join(['<li class="heslo" id="', obj.id_heslo, '"><a href="', obj.id_heslo,'" class="ajax">',  obj.heslo, '</a></li>\n']))
+                  current.append("".join(['<li class="heslo" id="', obj.id_heslo, '">',  obj.heslo, '</li>\n']))
 	      chunk = getTree(obj.id_heslo, level+1)
               
 	      if chunk:
@@ -409,10 +409,6 @@ def get_concept_as_dict(subject_id):
     pribuzny = query_to_dicts("""SELECT pribuzny
         FROM pribuznost
         WHERE pribuznost.id_heslo = '%s'""" %subject_id)
-        
-    zkratka = query_to_dicts("""SELECT zkratka
-        FROM psh_zkratka
-        WHERE psh_zkratka.id_heslo = '%s'""" %subject_id)
     
     hesla = list(heslo)
     if hesla:
@@ -422,7 +418,6 @@ def get_concept_as_dict(subject_id):
         for n in nadrazeny:
             heslo["nadrazeny"] = n["nadrazeny"]
 
-        heslo["zkratka"] = list(zkratka)[0]["zkratka"]
         heslo["podrazeny"] = []
         heslo["pribuzny"] = []
         heslo["varianty"] = []
@@ -553,34 +548,32 @@ def make_skos():
   </skos:ConceptScheme>\n\n"""
 
     skos_dir = os.path.join(settings.ROOT, "static/skos")
-    skos_file = open("%s/psh-skos.rdf" %skos_dir, "w")
+    skos_file = open("%s/psh_skos.rdf" %skos_dir, "w")
     skos_file.write(header)
 
     hesla = query_to_dicts("""SELECT id_heslo
         FROM hesla""")
     hesla = list(hesla)
-    print len(hesla)
     id_hesel = [heslo["id_heslo"] for heslo in hesla]
 
     for id_heslo in id_hesel:
         print id_heslo
         heslo = get_concept_as_dict(id_heslo)
-        #if heslo["zkratka"] != "ob":
+
         skos_file.write("".join(['<skos:Concept rdf:about="http://psh.ntkcz.cz/skos/', heslo["id_heslo"],'">\n']))
         skos_file.write('<skos:inScheme rdf:resource="http://psh.ntkcz.cz/skos/"/>\n')
         skos_file.write("".join(['<dc:identifier>', heslo["id_heslo"],'</dc:identifier>\n']))
         skos_file.write("".join(['<skos:prefLabel xml:lang="cs">', heslo["heslo"],'</skos:prefLabel>\n']).encode("utf8"))
         skos_file.write("".join(['<skos:prefLabel xml:lang="en">', heslo["ekvivalent"],'</skos:prefLabel>\n']).encode("utf8"))
         for varianta in heslo["varianty"]:
-            #if varianta["jazyk"] == "cs":
             skos_file.write("".join(['<skos:altLabel xml:lang="', varianta["jazyk"],'">', varianta["varianta"],'</skos:altLabel>\n']).encode("utf8"))
-    
+
         for podrazeny in heslo["podrazeny"]:
             skos_file.write("".join(['<skos:narrower rdf:resource="http://psh.ntkcz.cz/skos/', podrazeny,'"/>\n']))
-    
+
         for pribuzny in heslo["pribuzny"]:
             skos_file.write("".join(['<skos:related rdf:resource="http://psh.ntkcz.cz/skos/', pribuzny,'"/>\n']))
-        
+
         if heslo["nadrazeny"]:
             skos_file.write("".join(['<skos:broader rdf:resource="http://psh.ntkcz.cz/skos/', heslo["nadrazeny"],'"/>\n']))
         skos_file.write("</skos:Concept>\n\n")
@@ -589,14 +582,7 @@ def make_skos():
     skos_file.close()
 
     skos_dir = os.path.join(settings.ROOT, "static/skos")
-    os.system("zip -j %s/psh-skos.zip %s/psh-skos.rdf" %(skos_dir, skos_dir))
+    os.system("zip -j %s/psh_skos.zip %s/psh_skos.rdf" %(skos_dir, skos_dir))
 
 if __name__ == "__main__":
     update()
-    #createTree()
-    #make_skos()
-    #subject = getSubject("13")
-    #if subject:
-        #deleteSubject(subject["id"])
-        #storeSubjectToDB(subject)
-        #translateLabel(subject["id"])
