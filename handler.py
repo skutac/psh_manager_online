@@ -12,7 +12,7 @@ OPTIONS
    -a -iteratively updates each subject in database, it takes a long time but during the process the database is still prepared for use
 """
 
-import os, sys, time, urllib2, math, re
+import os, sys, time, urllib2, math, re, datetime
 from itertools import *
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings_local'
@@ -504,7 +504,7 @@ def make_skos():
     <dc:title xml:lang="en">Polythematic Structured Subject Heading System</dc:title>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>
     <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#year">1993</dcterms:created>
-    <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#year">2010</dcterms:modified>
+    <dcterms:modified>%s</dcterms:modified>
     <skos:hasTopConcept rdf:resource="http://psh.ntkcz.cz/skos/PSH1"/>
     <skos:hasTopConcept rdf:resource="http://psh.ntkcz.cz/skos/PSH10067"/>
     <skos:hasTopConcept rdf:resource="http://psh.ntkcz.cz/skos/PSH10355"/>
@@ -550,7 +550,7 @@ def make_skos():
     <skos:hasTopConcept rdf:resource="http://psh.ntkcz.cz/skos/PSH9759"/>
     <skos:hasTopConcept rdf:resource="http://psh.ntkcz.cz/skos/PSH9899"/>
     <foaf:homepage rdf:resource="http://www.techlib.cz/cs/katalogy-a-databaze/psh/"/>
-  </skos:ConceptScheme>\n\n"""
+  </skos:ConceptScheme>\n\n"""% datetime.date.today()
 
     skos_dir = os.path.join(settings.ROOT, "static/skos")
     skos_file = open("%s/psh-skos.rdf" %skos_dir, "w")
