@@ -173,7 +173,7 @@ function highlight(li){
 
 function getConcept(subjectID){
     $.ajax({type : 'POST',
-              url : 'getConcept', 
+              url : './getConcept', 
               success: function(concept){
                        $('#concept').html(concept).hide();
                        checkWikipedia(subjectID);
@@ -202,9 +202,9 @@ function unwrap(current){
 }
 
 function checkWikipedia(subjectID){
-      var parent = $('#logoWikipedia').parent();
+      var parent = $('#logo_wikipedia').parent();
       var subject = $('#' + subjectID).text();
-      var logoWikipedia = $('#logoWikipedia'); 
+      var logoWikipedia = $('#logo_wikipedia'); 
       parent.removeAttr('href');
       logoWikipedia.attr('class', 'inactive');
       logoWikipedia.css('opacity', '0.3');
