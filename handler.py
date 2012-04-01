@@ -94,7 +94,7 @@ def createTree():
    
    for concept in concepts:
       print "---- Top concept:", concept.id_heslo, "----"
-      tree.append("".join(['<li class="heslo unwrap" id="', concept.id_heslo, '"><a href="', concept.id_heslo,'" class="ajax">',  concept.heslo, '</a></li>\n']))
+      tree.append("".join(['<li class="heslo unwrap" id="', concept.id_heslo, '">',  concept.heslo, '</li>\n']))
       chunk = getTree(concept.id_heslo)
       if chunk:
 	tree.append(chunk)
@@ -121,9 +121,9 @@ def getTree(subjectID, level=1):
 	  
 	  for obj in hesla:
 	      if len(Hierarchie.objects.filter(nadrazeny=obj.id_heslo)):
-                  current.append("".join(['<li class="heslo unwrap" id="', obj.id_heslo, '"><a href="', obj.id_heslo,'" class="ajax">',  obj.heslo, '</a></li>\n']))
+                  current.append("".join(['<li class="heslo unwrap" id="', obj.id_heslo, '">',  obj.heslo, '</li>\n']))
 	      else:
-                  current.append("".join(['<li class="heslo" id="', obj.id_heslo, '"><a href="', obj.id_heslo,'" class="ajax">',  obj.heslo, '</a></li>\n']))
+                  current.append("".join(['<li class="heslo" id="', obj.id_heslo, '">',  obj.heslo, '</li>\n']))
 	      chunk = getTree(obj.id_heslo, level+1)
               
 	      if chunk:
@@ -592,8 +592,8 @@ def make_skos():
     os.system("zip -j %s/psh-skos.zip %s/psh-skos.rdf" %(skos_dir, skos_dir))
 
 if __name__ == "__main__":
-    update()
-    #createTree()
+    #update()
+    createTree()
     #make_skos()
     #subject = getSubject("13")
     #if subject:

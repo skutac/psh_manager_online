@@ -3,17 +3,19 @@ var screenheight = screen.height;
 $(document).ready(function(){
     $('#scrollDiv, #scrollable').css('height', (screenheight-200));
     $('#mainTree').load('static/html/tree.html', function(){
-        var test = $('#pshID').text();
-        if(test.length == 0){
-            getConcept("PSH1");
+        var split = window.location.hash.split("#!");
+        if(split.length == 1){
+           getConcept("PSH1");
 	   checkWikipedia('PSH1');
         }
         else{
-            var subjectID = test;
-            var subject = $("#titleCS").text();
-            var current = $('#' + subjectID);
-            unwrap(current);
-            highlight(current);
+           var subjectID = split[1];
+           var current = $("#" + subjectID);
+	   var subject = current.text();
+	   getConcept(subjectID);
+	   saveToCache(subject, subjectID);
+	   unwrap(current);
+	   highlight(current);
         }
     });
 
@@ -61,6 +63,32 @@ $("#search").delegate('#pshSuggest', 'keyup', function(event){
     }
 });
 
+$("body").delegate(".heslo", "click", function(){
+    var subjectID = $(this).attr("itemid");
+    if(!(subjectID)){
+      subjectID = $(this).attr("id");
+    }
+    window.location.hash = "!" + subjectID;
+    return false;
+});
+
+$(window).bind("hashchange", function(){
+  var split = window.location.hash.split("#!")
+  if (split.length == 1){
+    return
+  }
+  else{
+    subjectID = split[1];
+    var current = $("#" + subjectID);
+    var subject = current.text();
+    getConcept(subjectID);
+    saveToCache(subject, subjectID);
+    unwrap(current);
+    highlight(current);
+  }
+   
+});
+
 });
 
 function getSuggestedSubject(subject){
@@ -72,13 +100,15 @@ function getSuggestedSubject(subject){
                             $('#pshSuggest').val("");
                             $('ul.ui-autocomplete').hide();
                             getSearchResult(subject, english);
+			    window.location.hash = "";
                         }
                         else{
                             var current = $('#' + subjectID);
-                            getConcept(subjectID);
-                            saveToCache(subject, subjectID);
-                            unwrap(current);
-                            highlight(current);
+			    window.location.hash = "!" + subjectID;
+//                             getConcept(subjectID);
+//                             saveToCache(subject, subjectID);
+//                             unwrap(current);
+//                             highlight(current);
                             $('#pshSuggest').val("");
                         }
                        }, 
@@ -149,13 +179,13 @@ function saveToCache(subject, subjectID){
         var cache = $('#cacheList li.active');
         cache.text(subject);
         cache.attr('itemid', subjectID);
-        cache.attr('class', 'inactive cache');
+        cache.attr('class', 'inactive cache heslo');
         var nextCache = $(cache).next();
         if(nextCache.get(0) != undefined){
-            nextCache.attr('class', 'active cache');
+            nextCache.attr('class', 'active cache heslo');
         }
         else{
-            $('#cacheList li:first').attr('class', 'active cache');
+            $('#cacheList li:first').attr('class', 'active cache heslo');
         }
     }
 }

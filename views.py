@@ -63,7 +63,7 @@ conceptTable = u"""
 
 
 
-def index(request):
+def index(request, subjectID):
    """Returns main site"""
    date_time = Aktualizace.objects.order_by("-datum_cas")[0].datum_cas
    return render_to_response("index.html", {"datetime":date_time})
@@ -133,29 +133,29 @@ def getSearchResult(request):
         result.append("<ul id='searchResult'>")
         if english == "inactive":
             subjects = Hesla.objects.filter(heslo__istartswith = substring).order_by("heslo")
-            result.extend(["".join(["<li itemid='", subject.id_heslo ,"' class='clickable'>", bold(substring, subject.heslo), "</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.heslo), "</li>"]) for subject in subjects])
             
             subjects = Varianta.objects.filter(varianta__istartswith = substring, jazyk="cs").order_by("varianta")
-            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable'>", bold(substring, subject.varianta), " (<i>", subject.id_heslo.heslo, "</i>)</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.varianta), " (<i>", subject.id_heslo.heslo, "</i>)</li>"]) for subject in subjects])
             
             subjects = Hesla.objects.filter(heslo__contains = substring).order_by("heslo").exclude(heslo__istartswith=substring)
-            result.extend(["".join(["<li itemid='", subject.id_heslo ,"' class='clickable'>", bold(substring, subject.heslo), "</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.heslo), "</li>"]) for subject in subjects])
             
             subjects = Varianta.objects.filter(varianta__contains = substring, jazyk="cs").order_by("varianta").exclude(varianta__istartswith=substring)
-            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable'>", bold(substring, subject.varianta), " (<i>", subject.id_heslo.heslo, "</i>)</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.varianta), " (<i>", subject.id_heslo.heslo, "</i>)</li>"]) for subject in subjects])
             
         else:
             subjects = Ekvivalence.objects.filter(ekvivalent__istartswith = substring).order_by("ekvivalent")
-            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable'>", bold(substring, subject.ekvivalent), "</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.ekvivalent), "</li>"]) for subject in subjects])
             
             subjects = Varianta.objects.filter(varianta__istartswith = substring, jazyk="en").order_by("varianta")
-            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable'>", bold(substring, subject.varianta), " (<i>", Ekvivalence.objects.get(id_heslo=subject.id_heslo.id_heslo).ekvivalent, "</i>)</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.varianta), " (<i>", Ekvivalence.objects.get(id_heslo=subject.id_heslo.id_heslo).ekvivalent, "</i>)</li>"]) for subject in subjects])
             
             subjects = Ekvivalence.objects.filter(ekvivalent__contains = substring).order_by("ekvivalent").exclude(ekvivalent__istartswith=substring)
-            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable'>", bold(substring, subject.ekvivalent), "</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.ekvivalent), "</li>"]) for subject in subjects])
             
             subjects = Varianta.objects.filter(varianta__contains = substring, jazyk="en").order_by("varianta").exclude(varianta__istartswith=substring)
-            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable'>", bold(substring, subject.varianta), " (<i>", Ekvivalence.objects.get(id_heslo=subject.id_heslo.id_heslo).ekvivalent, "</i>)</li>"]) for subject in subjects])
+            result.extend(["".join(["<li itemid='", subject.id_heslo.id_heslo ,"' class='clickable heslo'>", bold(substring, subject.varianta), " (<i>", Ekvivalence.objects.get(id_heslo=subject.id_heslo.id_heslo).ekvivalent, "</i>)</li>"]) for subject in subjects])
             
         result.append("</ul>")
     
@@ -212,13 +212,13 @@ def getConceptFromDB(subjectID):
             narrower = []
             if len(narrowerObj) > 0:
                 for narrow in narrowerObj:
-                        narrower.append(u"<li itemid='%s' class='clickable'>%s</li>"%(narrow.id_heslo, narrow.heslo))
+                        narrower.append(u"<li itemid='%s' class='clickable heslo'>%s</li>"%(narrow.id_heslo, narrow.heslo))
             else:
                 narrower = none
                 
             try:
                 broader = Hierarchie.objects.get(podrazeny=subjectID)
-                broader = u"<li itemid='%s' class='clickable'>%s</li>"%(broader.nadrazeny ,Hesla.objects.get(id_heslo=broader.nadrazeny).heslo)
+                broader = u"<li itemid='%s' class='clickable heslo'>%s</li>"%(broader.nadrazeny ,Hesla.objects.get(id_heslo=broader.nadrazeny).heslo)
             except:
                 broader = none
             
@@ -244,13 +244,13 @@ def getConceptFromDB(subjectID):
             related = []
             if len(relatedObj) > 0:
                 for obj in relatedObj:
-                    related.append(u"<li itemid='%s' class='clickable'>%s</li>"%(obj.id_heslo, obj.heslo))
+                    related.append(u"<li itemid='%s' class='clickable heslo'>%s</li>"%(obj.id_heslo, obj.heslo))
             else:
                 related = none
             return conceptTable%(titleCS, acronym, titleEN, sysno, subjectID, "".join(nonprefCS), "".join(nonprefEN), "".join(related), broader, "".join(narrower))
             
         except Exception, e:
-            return str(e)
+            return "".join(["<h3>Heslo s ID <b>'", subjectID, "'</b> neexistuje.</h3>"])
     
 def getWikipediaLink(request):
     """Check for wikipedia link"""
