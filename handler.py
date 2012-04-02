@@ -592,8 +592,8 @@ def make_skos():
     os.system("zip -j %s/psh-skos.zip %s/psh-skos.rdf" %(skos_dir, skos_dir))
 
 if __name__ == "__main__":
-    #update()
-    createTree()
+    update()
+    #createTree()
     #make_skos()
     #subject = getSubject("13")
     #if subject:
