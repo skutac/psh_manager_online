@@ -287,7 +287,7 @@ def translateLabels():
             for heslo in backup:
                 deleteSubject(heslo.podrazeny)
             print str(e)
-            send_mail(u'Chyba při aktualizaci PSH Manageru', "".join([u'Automatická zpráva o aktualizaci PSH Manageru.\n\nPři aktualizaci PSH Manageru došlo k chybě při vytváření hesla ', subjectID ,u'. Pravděpodobně se jedná o chybu v propojení hesla na neexistující heslo (mylně přečtené/zadané nadřazené nebo příbuzné heslo).\n\nProsím o kontrolu hesla ', subjectID, u'.\n\nDíky, \n\nVáš PSH Manager.']), 'skuta.ctibor@gmail.com', ["kristyna.kozuchova@techlib.cz", "pavlina.omastova@techlib.cz", "skuta.ctibor@gmail.com"], fail_silently=False)
+            send_mail(u'Chyba při aktualizaci PSH Manageru', "".join([u'Automatická zpráva o aktualizaci PSH Manageru.\n\nPři aktualizaci PSH Manageru došlo k chybě při vytváření hesla ', subjectID ,u'. Pravděpodobně se jedná o chybu v propojení hesla na neexistující heslo (mylně přečtené/zadané nadřazené nebo příbuzné heslo).\n\nProsím o kontrolu hesla ', subjectID, u'.\n\nDíky, \n\nVáš PSH Manager.']), 'skuta.ctibor@gmail.com', ["kristyna.kozuchova@techlib.cz", "pavlina.omastova@techlib.cz", "eliska.vesela@techlib.cz","skuta.ctibor@gmail.com"], fail_silently=False)
             sys.exit()
 
 def getTopConcepts():
