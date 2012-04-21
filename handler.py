@@ -470,9 +470,9 @@ def get_wikipedia_links():
     for subject in subjects:
         if not Vazbywikipedia.objects.filter(id_heslo=subject.id_heslo):
             if get_wikipedia_link(subject.heslo):
-                link, created = Vazbywikipedia.objects.get_or_create(id_heslo=subject.id_heslo, heslo_wikipedia=subject.heslo, uri_wikipedia="".join(["http://cs.wikipedia.org/wiki/", subject.heslo]).encode("utf8"), typ_vazby="exactMatch", overeni=False)
-                if created:
-                    print "New link to Wikipedia:", subject.heslo
+		print subject.heslo
+                link = Vazbywikipedia(id_heslo=subject.id_heslo, heslo_wikipedia=subject.heslo, uri_wikipedia="".join(["http://cs.wikipedia.org/wiki/", subject.heslo]).encode("utf8"), typ_vazby="exactMatch", overeni=False)
+		link.save()
 
 
 def get_wikipedia_link(subject):
@@ -624,7 +624,7 @@ def make_skos():
 
 if __name__ == "__main__":
     #update()
-    #get_wikipedia_links()
+    get_wikipedia_links()
     #createTree()
     #make_skos()
     #subject = getSubject("13")
