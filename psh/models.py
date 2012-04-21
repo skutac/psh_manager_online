@@ -29,8 +29,8 @@ class Pribuznost(models.Model):
         db_table = u'pribuznost'
 
 class Zkratka(models.Model):
-  id_heslo = models.ForeignKey('Hesla', db_column="id_heslo", primary_key=True)
-  zkratka = models.CharField(max_length=10)
+    id_heslo = models.ForeignKey('Hesla', db_column="id_heslo", primary_key=True)
+    zkratka = models.CharField(max_length=10)
 
 class Topconcepts(models.Model):
     id_heslo = models.CharField(max_length=36, primary_key=True)
@@ -68,15 +68,15 @@ class Vazbyphnk(models.Model):
     typ_vazby = models.CharField(max_length=150)
     class Meta:
         db_table = u'vazbyphnk'
-        
+
 class Vazbywikipedia(models.Model):
     id_heslo = models.CharField(max_length=30, primary_key=True)
     heslo_wikipedia = models.CharField(max_length=255)
     uri_wikipedia = models.CharField(max_length=255)
     typ_vazby = models.CharField(max_length=150)
+    overeni = models.BooleanField()
     class Meta:
         db_table = u'vazbywikipedia'
 
 class Aktualizace(models.Model):
     datum_cas = models.DateTimeField(auto_now=True, auto_now_add=True)
-
