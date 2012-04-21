@@ -454,16 +454,14 @@ def update():
     """Inititates update of PSH database."""
     save_update_time()
     if len(sys.argv) > 1:
-        all = sys.argv[1]
-        if all == "-n":
-            all = False
+        param = sys.argv[1]
+        if param == "-n":
+            updatePSH(False)
         elif all == "-a":
-            all = True
-        else:
-            all = False
-    else:
-        all = False
-    updatePSH(all)
+            updatePSH(True)
+	elif all == "-w":
+	    get_wikipedia_links()
+    
 
 def get_wikipedia_links():
     subjects = Hesla.objects.all()
