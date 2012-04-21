@@ -149,7 +149,7 @@ def updatePSH(all):
     else:
         try:
             hesla = Hesla.objects.all()
-            ids = [int(re.sub("PSH", "", heslo.id_heslo)) for heslo in hesla]
+            ids = [int(heslo.id_heslo[3:]) for heslo in hesla if len(heslo.id_heslo) > 3]
             last = max(ids)
         except:
             last = 0
@@ -413,11 +413,11 @@ def get_concept_as_dict(subject_id):
     zkratka = query_to_dicts("""SELECT zkratka
         FROM psh_zkratka
         WHERE psh_zkratka.id_heslo = '%s'""" %subject_id)
-    
+
     vazba_wikipedia = query_to_dicts("""SELECT uri_wikipedia
         FROM vazbywikipedia
         WHERE vazbywikipedia.id_heslo = '%s'""" %subject_id)
-    
+
     hesla = list(heslo)
     if hesla:
         heslo = hesla[0]
@@ -437,7 +437,7 @@ def get_concept_as_dict(subject_id):
             heslo["pribuzny"].append(p["pribuzny"])
         for v in varianty:
             heslo["varianty"].append({"varianta": v["varianta"], "jazyk": v["jazyk"]})
-        
+
         heslo["vazba_wikipedia"] = ""
         for n in vazba_wikipedia:
             print n
@@ -459,18 +459,18 @@ def update():
             updatePSH(False)
         elif all == "-a":
             updatePSH(True)
-	elif all == "-w":
-	    get_wikipedia_links()
-    
+        elif all == "-w":
+            get_wikipedia_links()
+
 
 def get_wikipedia_links():
     subjects = Hesla.objects.all()
     for subject in subjects:
         if not Vazbywikipedia.objects.filter(id_heslo=subject.id_heslo):
             if get_wikipedia_link(subject.heslo):
-		print subject.heslo
+                print subject.heslo
                 link = Vazbywikipedia(id_heslo=subject.id_heslo, heslo_wikipedia=subject.heslo, uri_wikipedia="".join(["http://cs.wikipedia.org/wiki/", subject.heslo]).encode("utf8"), typ_vazby="exactMatch", overeni=False)
-		link.save()
+                link.save()
 
 
 def get_wikipedia_link(subject):
@@ -609,7 +609,7 @@ def make_skos():
 
         if heslo["nadrazeny"]:
             skos_file.write("".join(['<skos:broader rdf:resource="http://psh.ntkcz.cz/skos/', heslo["nadrazeny"],'"/>\n']))
-            
+
         if heslo["vazba_wikipedia"]:
             skos_file.write("".join(['<skos:exactMatch rdf:resource="', heslo["vazba_wikipedia"],'" />\n']).encode("utf-8"))
         skos_file.write("</skos:Concept>\n\n")
