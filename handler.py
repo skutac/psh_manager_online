@@ -12,7 +12,7 @@ OPTIONS
    -a -iteratively updates each subject in database, it takes a long time but during the process the database is still prepared for use
 """
 
-import os, sys, time, urllib2, math, re, datetime
+import os, sys, time, urllib2, math, re, datetime, csv
 from itertools import *
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings_local'
@@ -23,6 +23,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.core.mail import send_mail
 from django.db import connection
+from django.core.exceptions import ObjectDoesNotExist
 
 conceptTable = u"""
     <table>
@@ -469,7 +470,7 @@ def get_wikipedia_links():
         if not Vazbywikipedia.objects.filter(id_heslo=subject.id_heslo):
             if get_wikipedia_link(subject.heslo):
                 print subject.heslo
-                link = Vazbywikipedia(id_heslo=subject.id_heslo, heslo_wikipedia=subject.heslo, uri_wikipedia="".join(["http://cs.wikipedia.org/wiki/", subject.heslo]).encode("utf8"), typ_vazby="exactMatch", overeni=False)
+                link = Vazbywikipedia(id_heslo=subject.id_heslo, uri_wikipedia="".join(["http://cs.wikipedia.org/wiki/", subject.heslo]).encode("utf8"), typ_vazby="exactMatch", overeni=False)
                 link.save()
 
 
@@ -482,6 +483,24 @@ def get_wikipedia_link(subject):
     except urllib2.HTTPError:
         return False
 
+def store_verified_wikipedia_links(filename):
+    reader = csv.DictReader(open(filename, "r"))
+    i = 0
+    for line in reader:
+        psh_id = line["Tabulka výsledků"].split("/")[-1]
+        if line[""] == "1":
+            uri_wikipedia=line["Přiřazený link"]
+        else:
+            uri_wikipedia=line["Správný link"]
+        try:
+            link = Vazbywikipedia.objects.get(id_heslo=psh_id)
+            link.overeni = True
+            link.uri_wikipedia = uri_wikipedia
+            link.save()
+        except ObjectDoesNotExist:
+            link = Vazbywikipedia(id_heslo=psh_id, uri_wikipedia=uri_wikipedia, typ_vazby="exactMatch", overeni=True)
+            link.save()
+    
 
 
 def make_skos():
@@ -622,6 +641,7 @@ def make_skos():
 
 if __name__ == "__main__":
     update()
+    #store_verified_wikipedia_links("static/wikipedia_links_verified/1.csv")
     #get_wikipedia_links()
     #createTree()
     #make_skos()

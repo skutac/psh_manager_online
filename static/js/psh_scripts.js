@@ -244,26 +244,27 @@ function checkWikipedia(subjectID){
               data : {subjectID: subjectID},
               success: function(msg){
 //                   console.log("---- Get wikipedia link:" + msg + " ----");
-                  if(msg == "True"){
+                  if(msg != ""){
+		    alert(msg);
                     logoWikipedia.removeAttr('class');
                     logoWikipedia.css('opacity', '1');
-                    parent.attr('href', 'http://cs.wikipedia.org/wiki/' + subject);
+                    parent.attr('href', msg);
                   }
-                  else{
-                    $.ajax({type : 'GET',
-	                    dataType: 'jsonp',
-                            url : 'http://cs.wikipedia.org/w/api.php?action=opensearch&search=' + subject, 
-                            success: function(concept){
-		              if(concept[1].length > 0){
-		                  logoWikipedia.removeAttr('class');
-		                  logoWikipedia.css('opacity', '1');
-		                  parent.attr('href', 'http://cs.wikipedia.org/wiki/' + subject);
-                                  saveWikipediaLink(subjectID);
-		              }
-                            },
-                            data : {}
-                    });
-                  }
+                  //else{
+                    //$.ajax({type : 'GET',
+	                    //dataType: 'jsonp',
+                            //url : 'http://cs.wikipedia.org/w/api.php?action=opensearch&search=' + subject, 
+                            //success: function(concept){
+		              //if(concept[1].length > 0){
+		                  //logoWikipedia.removeAttr('class');
+		                  //logoWikipedia.css('opacity', '1');
+		                  //parent.attr('href', 'http://cs.wikipedia.org/wiki/' + subject);
+                                  //saveWikipediaLink(subjectID);
+		              //}
+                            //},
+                            //data : {}
+                    //});
+                  //}
               }
             });
 }

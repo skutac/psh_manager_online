@@ -8,6 +8,7 @@ from psh_manager_online.psh.models import Hesla, Varianta, Ekvivalence, Hierarch
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 conceptTable = u"""
             <table>
@@ -257,20 +258,20 @@ def getWikipediaLink(request):
     subjectID = request.POST["subjectID"]
     try:
         link = Vazbywikipedia.objects.get(id_heslo=subjectID)
-        return HttpResponse("True")
-    except Exception, e:
-        return HttpResponse(str(e))
+        return HttpResponse(link.uri_wikipedia)
+    except ObjectDoesNotExist:
+        return HttpResponse("")
 
-def saveWikipediaLink(request):
-    """Save wikipedia link"""
-    subjectID = request.POST["subjectID"]
-    try:
-        heslo = Hesla.objects.get(id_heslo=subjectID)
-        link = Vazbywikipedia(id_heslo=subjectID, heslo_wikipedia=heslo.heslo, uri_wikipedia="".join(["http://cs.wikipedia.org/wiki/", heslo.heslo]), typ_vazby="exactMatch")
-        link.save()
-        return HttpResponse("--- Wikipedia link saved ---")
-    except Exception, e:
-        return HttpResponse(str(e))
+#def saveWikipediaLink(request):
+    #"""Save wikipedia link"""
+    #subjectID = request.POST["subjectID"]
+    #try:
+        #heslo = Hesla.objects.get(id_heslo=subjectID)
+        #link = Vazbywikipedia(id_heslo=subjectID, uri_wikipedia="".join(["http://cs.wikipedia.org/wiki/", heslo.heslo]), typ_vazby="exactMatch")
+        #link.save()
+        #return HttpResponse("--- Wikipedia link saved ---")
+    #except Exception, e:
+        #return HttpResponse(str(e))
 
 def update(request):
     """Update trigger"""

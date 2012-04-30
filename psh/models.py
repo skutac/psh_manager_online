@@ -71,7 +71,6 @@ class Vazbyphnk(models.Model):
 
 class Vazbywikipedia(models.Model):
     id_heslo = models.CharField(max_length=30, primary_key=True)
-    heslo_wikipedia = models.CharField(max_length=255)
     uri_wikipedia = models.CharField(max_length=255)
     typ_vazby = models.CharField(max_length=150)
     overeni = models.BooleanField()
