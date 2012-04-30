@@ -245,7 +245,6 @@ function checkWikipedia(subjectID){
               success: function(msg){
 //                   console.log("---- Get wikipedia link:" + msg + " ----");
                   if(msg != ""){
-		    alert(msg);
                     logoWikipedia.removeAttr('class');
                     logoWikipedia.css('opacity', '1');
                     parent.attr('href', msg);
