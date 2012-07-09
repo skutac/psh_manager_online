@@ -458,9 +458,9 @@ def update():
         param = sys.argv[1]
         if param == "-n":
             updatePSH(False)
-        elif all == "-a":
+        elif param == "-a":
             updatePSH(True)
-        elif all == "-w":
+        elif param == "-w":
             get_wikipedia_links()
 
 
