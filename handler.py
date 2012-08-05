@@ -462,6 +462,8 @@ def update():
             updatePSH(True)
         elif param == "-w":
             get_wikipedia_links()
+    else:
+	updatePSH(False)
 
 
 def get_wikipedia_links():
