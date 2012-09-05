@@ -647,7 +647,7 @@ if __name__ == "__main__":
     #get_wikipedia_links()
     #createTree()
     #make_skos()
-    #subject = getSubject("13")
+    #subject = getSubject("12206")
     #if subject:
             #deleteSubject(subject["id"])
             #storeSubjectToDB(subject)
