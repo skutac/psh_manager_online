@@ -4,7 +4,7 @@
 import os
 import config
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

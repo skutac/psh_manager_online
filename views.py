@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import simplejson as json
 import re
+from itertools import *
 
 from psh_manager_online import handler
 from psh_manager_online.psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, Vazbywikipedia, SysNumber, Aktualizace
@@ -9,6 +10,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import connection
 
 conceptTable = u"""
             <table>
@@ -62,7 +64,21 @@ conceptTable = u"""
             </table>
             """
 
-
+def query_to_dicts(query_string, *query_args):
+    """Run a simple query and produce a generator
+    that returns the results as a bunch of dictionaries
+    with keys for the column values selected.
+    """
+    cursor = connection.cursor()
+    cursor.execute(query_string, query_args)
+    col_names = [desc[0] for desc in cursor.description]
+    while True:
+        row = cursor.fetchone()
+        if row is None:
+            break
+        row_dict = dict(izip(col_names, row))
+        yield row_dict
+    return
 
 def index(request, subjectID):
    """Returns main site"""
@@ -171,24 +187,27 @@ def bold(substring, text):
 
 def getID(request):
     """Get PSH ID for given text label (translate alternative label to preferred label)"""
+    search_term = request.POST["input"]
+    
     if request.POST["en"] == 'inactive':
-        try:
-            id = Hesla.objects.get(heslo=request.POST["input"]).id_heslo
-        except:
-            try:
-                id = Varianta.objects.get(varianta=request.POST["input"], jazyk="cs").id_heslo.id_heslo
-                
-            except:
-                id = "None"
+        ids = list(query_to_dicts("""SELECT id_heslo FROM hesla 
+                                    WHERE heslo LIKE '%s'"""%"".join(["%%", search_term, "%%"])))
+        varianta_ids = list(query_to_dicts("""SELECT id_heslo FROM varianta 
+                                    WHERE jazyk = 'cs'
+                                    AND varianta LIKE '%s'"""%"".join(["%%", search_term, "%%"])))
     else:
-        try:
-            id = Ekvivalence.objects.get(ekvivalent=request.POST["input"]).id_heslo.id_heslo
-        except:
-            try:
-                id = Varianta.objects.get(varianta=request.POST["input"], jazyk="en").id_heslo.id_heslo
-            except:
-                id = "None"
-    return HttpResponse(id)
+        ids = list(query_to_dicts("""SELECT id_heslo FROM ekvivalence 
+                                    WHERE ekvivalent LIKE '%s'"""%"".join(["%%", search_term, "%%"])))
+        varianta_ids = list(query_to_dicts("""SELECT id_heslo FROM varianta 
+                                    WHERE jazyk = 'en'
+                                    AND varianta LIKE '%s'"""%"".join(["%%", search_term, "%%"])))
+    ids.extend(varianta_ids)
+    if len(ids) != 1:
+        subject_id = None
+    else:
+        subject_id = ids[0]["id_heslo"]
+
+    return HttpResponse(subject_id)
 
 def getConcept(request):
     """Interface for subject retrieval"""
