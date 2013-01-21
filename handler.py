@@ -13,17 +13,19 @@ OPTIONS
 """
 
 import os, sys, time, urllib2, math, re, datetime, csv
-from itertools import *
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings_local'
 
-from psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, SysNumber, Aktualizace, Vazbywikipedia
+from psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, SysNumber, Aktualizace, Vazbywikipedia, Vazbydbpedia
+
+from functions import query_to_dicts
 
 from django.conf import settings
 from django.http import HttpResponse
 from django.core.mail import send_mail
-from django.db import connection
 from django.core.exceptions import ObjectDoesNotExist
+
+import psh_mapper
 
 conceptTable = u"""
     <table>
@@ -142,20 +144,21 @@ def updatePSH(all):
 
     print "Checking server for updates..."
     count = getRecordCount()
-    #count = 15
     print "".join(["Last PSH ID on server: ", str(count)])
-    if all == True:
+    hesla = Hesla.objects.all()
+    if all:
         print "Updating PSH database..."
+        current_psh_ids = [heslo.id_heslo for heslo in hesla]
         last = 0
     else:
         try:
-            hesla = Hesla.objects.all()
-            ids = [int(heslo.id_heslo[3:]) for heslo in hesla if len(heslo.id_heslo) > 3]
-            last = max(ids)
+            nums = [int(heslo.id_heslo[3:]) for heslo in hesla if len(heslo.id_heslo) > 3]
+            last = max(nums)
         except:
             last = 0
     print "".join(["Last PSH ID in database: ", str(last)])
 
+    psh_ids = []
     if count > last:
         print "Updating database..."
         for num in range(last+1, count+1):
@@ -166,10 +169,20 @@ def updatePSH(all):
                 deleteSubject(subject["id"])
                 storeSubjectToDB(subject)
                 translateLabel(subject["id"])
+                psh_ids.append(subject["id"])
 
         translateLabels()
         createTree()
-        make_skos() 
+        make_skos()
+
+    if all:
+        psh_ids = set(psh_ids)
+        current_psh_ids = set(current_psh_ids)
+        to_remove = current_psh_ids - psh_ids
+        if len(to_remove) < 10:
+            for psh_id in to_remove:
+                deleteSubject(psh_id)
+
 
 def getSubject(num):
     """Gets record subject from server according to its number"""
@@ -213,7 +226,9 @@ def getSubject(num):
             return heslo
         except Exception, e:
             print "".join(["PSH", str(num), " ERROR\n---- STDERR: ", str(e), " ----"])
-            return None
+            return False
+    else:
+        return False
 
 def storeSubjectToDB(heslo):
     """Stores subject to database. The parameter heslo is dictionary representation of subject retrieved in function getSubject"""
@@ -369,22 +384,6 @@ def isValid(num):
     else:
         return False
 
-def query_to_dicts(query_string, *query_args):
-    """Run a simple query and produce a generator
-    that returns the results as a bunch of dictionaries
-    with keys for the column values selected.
-    """
-    cursor = connection.cursor()
-    cursor.execute(query_string, query_args)
-    col_names = [desc[0] for desc in cursor.description]
-    while True:
-        row = cursor.fetchone()
-        if row is None:
-            break
-        row_dict = dict(izip(col_names, row))
-        yield row_dict
-    return
-
 def get_concept_as_dict(subject_id):
     """Get concept as dict from database according to its PSH ID"""
     heslo = query_to_dicts("""SELECT hesla.id_heslo, 
@@ -450,20 +449,6 @@ def get_concept_as_dict(subject_id):
 def save_update_time():
     update_time = Aktualizace()
     update_time.save()
-
-def update():
-    """Inititates update of PSH database."""
-    save_update_time()
-    if len(sys.argv) > 1:
-        param = sys.argv[1]
-        if param == "-n":
-            updatePSH(False)
-        elif param == "-a":
-            updatePSH(True)
-        elif param == "-w":
-            get_wikipedia_links()
-    else:
-	updatePSH(False)
 
 
 def get_wikipedia_links():
@@ -640,6 +625,41 @@ def make_skos():
 
     skos_dir = os.path.join(settings.ROOT, "static/skos")
     os.system("zip -j %s/psh-skos.zip %s/psh-skos.rdf" %(skos_dir, skos_dir))
+
+def map_psh_to_dbpedia():
+    print "Mapping PSH to DBPedia..."
+    hesla = list(query_to_dicts("""SELECT * FROM ekvivalence"""))
+    count = len(hesla)
+    i = 1
+
+    for heslo in hesla[2700:]:
+        print "%s/%s"%(i, count)
+        dbpedia = psh_mapper.map_to_dbpedia(heslo["ekvivalent"])
+        if dbpedia:
+            vazba, create = Vazbydbpedia.objects.get_or_create(id_heslo=heslo["id_heslo"], heslo_dbpedia=heslo["ekvivalent"].capitalize(), uri_dbpedia=dbpedia, typ_vazby="exactMatch")
+            if create:
+                vazba.save()
+            print dbpedia
+        i += 1
+
+
+
+def update():
+    """Inititates update of PSH database."""
+    save_update_time()
+    if len(sys.argv) > 1:
+        param = sys.argv[1]
+        if param == "-n":
+            updatePSH(False)
+        elif param == "-a":
+            updatePSH(True)
+        elif param == "-w":
+            get_wikipedia_links()
+        elif param == "-dbpedia":
+            map_psh_to_dbpedia()
+    else:
+        updatePSH(False)
+    
 
 if __name__ == "__main__":
     update()

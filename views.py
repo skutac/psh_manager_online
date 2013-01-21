@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import simplejson as json
 import re
+import csv
 from itertools import *
 
 from psh_manager_online import handler
@@ -296,3 +297,20 @@ def update(request):
     """Update trigger"""
     handler.update()
     return render_to_response('update.html', {})
+
+def get_csv(request):
+    hesla = query_to_dicts("""SELECT * FROM hesla""")
+    hesla = list(hesla)
+
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="psh.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['heslo', 'id_heslo'])
+    try:
+        for heslo in hesla:
+            writer.writerow([heslo["heslo"].encode("utf8"), heslo["id_heslo"]])
+    except Exception, e:
+        print str(e)
+
+    return response

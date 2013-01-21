@@ -48,7 +48,7 @@ class Vazbydbpedia(models.Model):
     id_heslo = models.CharField(max_length=30, primary_key=True)
     heslo_dbpedia = models.CharField(max_length=255)
     uri_dbpedia = models.CharField(max_length=255)
-    vazba = models.CharField(max_length=150)
+    typ_vazby = models.CharField(max_length=150)
     class Meta:
         db_table = u'vazbydbpedia'
 
