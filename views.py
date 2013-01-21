@@ -307,10 +307,8 @@ def get_csv(request):
 
     writer = csv.writer(response)
     writer.writerow(['heslo', 'id_heslo'])
-    try:
-        for heslo in hesla:
-            writer.writerow([heslo["heslo"].encode("utf8"), heslo["id_heslo"]])
-    except Exception, e:
-        print str(e)
+    
+    for heslo in hesla:
+        writer.writerow([heslo["heslo"].encode("utf8"), heslo["id_heslo"]])
 
     return response
