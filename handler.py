@@ -632,7 +632,7 @@ def map_psh_to_dbpedia():
     count = len(hesla)
     i = 1
 
-    for heslo in hesla[2700:]:
+    for heslo in hesla:
         print "%s/%s"%(i, count)
         dbpedia = psh_mapper.map_to_dbpedia(heslo["ekvivalent"])
         if dbpedia:
