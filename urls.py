@@ -25,7 +25,7 @@ urlpatterns = patterns('psh_manager_online',
     (r'^wikipedia$', 'views.getWikipediaLink'),
     (r'^saveWikipediaLink$', 'views.saveWikipediaLink'),
     (r'^update$', 'views.update'),
-    # (r'^psh_csv$', 'views.get_csv'),
+    (r'^psh_csv$', 'views.get_csv'),
     #(r'^updateTree$', 'handler.updateTree'),
 )
 

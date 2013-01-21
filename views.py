@@ -298,17 +298,17 @@ def update(request):
     handler.update()
     return render_to_response('update.html', {})
 
-# def get_csv(request):
-#     hesla = query_to_dicts("""SELECT * FROM hesla""")
-#     hesla = list(hesla)
+def get_csv(request):
+    hesla = query_to_dicts("""SELECT * FROM hesla""")
+    hesla = list(hesla)
 
-#     response = HttpResponse(mimetype='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="psh.csv"'
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="psh.csv"'
 
-#     writer = csv.writer(response)
-#     writer.writerow(['heslo', 'id_heslo'])
+    writer = csv.writer(response)
+    writer.writerow(['heslo', 'id_heslo'])
     
-#     for heslo in hesla:
-#         writer.writerow([heslo["heslo"].encode("utf8"), heslo["id_heslo"]])
+    for heslo in hesla:
+        writer.writerow([heslo["heslo"].encode("utf8"), heslo["id_heslo"]])
 
-#     return response
+    return response
