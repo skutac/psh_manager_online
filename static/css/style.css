@@ -1,34 +1,19 @@
-/*@font-face {  
-  font-family: "Univers55";
-  src: url("../fonts/UniversCom-55Roman.ttf");
+@font-face
+{
+font-family: Ubuntu;
+src: url('../fonts/Ubuntu-R.ttf');
 }
-
-@font-face {  
-  font-family: "Univers55";
-  src: url("../fonts/UniversCom-65Bold.ttf");
-  font-weight: bold;
-}
-@font-face {
-    font-family: "Univers55";
-    src: url("../fonts/UniversCom-45Light.ttf");
-    font-style: italic;
-}*/
 
 body{
 width: 95%;
 margin: auto;
 display: block;
-font-family: Univers55, times, sans-serif;
+font-family: 'Ubuntu', sans-serif;
 }
 
 #mainTree li{
-/*background-color: #EDE8EA;
-border-radius: 8px;
--moz-border-radius: 8px;*/
-/* padding-bottom: 4px; */
 padding-top: 4px;
 padding-left: 25px;
-/* width: 90%; */
 }
 
 

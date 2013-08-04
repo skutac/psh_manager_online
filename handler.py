@@ -16,7 +16,7 @@ import os, sys, time, urllib2, math, re, datetime, csv
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings_local'
 
-from psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, SysNumber, Aktualizace, Vazbywikipedia, Vazbydbpedia
+from psh.models import Hesla, Varianta, Ekvivalence, Hierarchie, Topconcepts, Pribuznost, Zkratka, SysNumber, Aktualizace, Vazbywikipedia, Vazbydbpedia, PocetZaznamu
 
 from functions import query_to_dicts
 
@@ -222,13 +222,32 @@ def getSubject(num):
                      'broader': broader,
                      'related': related,
                      'altLabelCS': altLabelCS,
-                     'altLabelEN': altLabelEN,}
+                     'altLabelEN': altLabelEN,
+                     'record_count':get_record_count_for_subject(prefLabelCS)}
             return heslo
         except Exception, e:
             print "".join(["PSH", str(num), " ERROR\n---- STDERR: ", str(e), " ----"])
             return False
     else:
         return False
+
+def get_record_count_for_subject(subject):
+    url = 'https://vufind.techlib.cz/vufind/Search/Results?lookfor="%s"&type=psh_facet&submit=Hledat'%subject
+    url = re.sub(" ", "+", url)
+    
+    try:
+        catalogue = urllib2.urlopen(url)
+        catalogue_html = catalogue.read()
+    except Exception, e:
+        return 0
+
+    record_count = re.search('class="yui-u first">(.*?)</div>', catalogue_html, re.S)
+    if record_count:
+        record_count = record_count.group(1)
+        record_count = [r for r in re.findall("<b>(.*?)</b>", record_count, re.S)][2].strip(" \n")
+        return record_count
+    else:
+        return 0
 
 def storeSubjectToDB(heslo):
     """Stores subject to database. The parameter heslo is dictionary representation of subject retrieved in function getSubject"""
@@ -245,6 +264,8 @@ def storeSubjectToDB(heslo):
     sysnum = SysNumber(id_heslo=hesloCS, sysnumber=heslo['sysnum'])
     sysnum.save()
 
+    pocet_zaznamu = PocetZaznamu(id_heslo=hesloCS, pocet=heslo['record_count'], pocet_hierarchie=heslo['record_count'])
+    pocet_zaznamu.save()
 
     if heslo['broader']:
         hierarchie = Hierarchie(nadrazeny=heslo['broader'], podrazeny=heslo['id'])

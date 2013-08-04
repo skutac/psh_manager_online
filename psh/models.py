@@ -10,6 +10,11 @@ class SysNumber(models.Model):
     id_heslo = models.ForeignKey('Hesla', db_column="id_heslo", primary_key=True)
     sysnumber = models.IntegerField()
 
+class PocetZaznamu(models.Model):
+    id_heslo = models.ForeignKey('Hesla', db_column="id_heslo", primary_key=True, db_index=True)
+    pocet = models.IntegerField()
+    pocet_hierarchie = models.IntegerField()
+
 class Ekvivalence(models.Model):
     id_heslo = models.ForeignKey('Hesla', db_column="id_heslo", primary_key=True)
     ekvivalent = models.CharField(max_length=255, blank=True)
