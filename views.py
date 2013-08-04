@@ -279,7 +279,8 @@ def getWikipediaLink(request):
     try:
         link = Vazbywikipedia.objects.get(id_heslo=subjectID)
         return HttpResponse(link.uri_wikipedia)
-    except ObjectDoesNotExist:
+    except Exception, e:
+        print str(e)
         return HttpResponse("")
 
 #def saveWikipediaLink(request):
