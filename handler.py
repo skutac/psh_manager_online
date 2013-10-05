@@ -174,6 +174,7 @@ def updatePSH(all):
         translateLabels()
         createTree()
         make_skos()
+        calculate_hierarchy_record_count()
 
     if all:
         psh_ids = set(psh_ids)
@@ -510,7 +511,43 @@ def store_verified_wikipedia_links(filename):
             link.save()
 
 def calculate_hierarchy_record_count():
-    pass
+    hierarchy = Hierarchie.objects.all()
+    counts = list(query_to_dicts("""SELECT * FROM psh_pocetzaznamu"""))
+    top = Topconcepts.objects.all()
+    subject2broader = {}
+    subject2count = {}
+
+    for c in counts:
+        subject2count[c["id_heslo"]] = c["pocet"]
+
+    for h in hierarchy:
+        subject2broader[h.podrazeny] = h.nadrazeny
+    
+    lowest = set(subject2broader.keys()) - set(subject2broader.values())
+    lowest = list(lowest)
+    already = set()
+
+    i = 0
+    for l in lowest:
+        count = subject2count[l]
+        lowest_count = count
+        current = l
+        while current in subject2broader:
+            current = subject2broader[current]
+            if current in already:
+                subject2count[current] += lowest_count
+            else:
+                subject2count[current] += count
+            already.add(current)
+            count = subject2count[current]
+
+    for s in subject2count:
+        subject = PocetZaznamu.objects.get(id_heslo=s)
+        subject.pocet_hierarchie = subject2count[s]
+        subject.save()
+    return
+
+        
 
 
 def make_skos():
@@ -676,8 +713,8 @@ def update():
             updatePSH(False)
         elif param == "-a":
             updatePSH(True)
-        elif param == "-w":
-            get_wikipedia_links()
+        # elif param == "-w":
+        #     get_wikipedia_links()
         elif param == "-dbpedia":
             map_psh_to_dbpedia()
     else:
@@ -685,6 +722,7 @@ def update():
     
 
 if __name__ == "__main__":
+    # calculate_hierarchy_record_count()
     update()
     #store_verified_wikipedia_links("static/wikipedia_links_verified/1.csv")
     #get_wikipedia_links()
