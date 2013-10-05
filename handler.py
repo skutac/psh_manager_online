@@ -508,7 +508,9 @@ def store_verified_wikipedia_links(filename):
         except ObjectDoesNotExist:
             link = Vazbywikipedia(id_heslo=psh_id, uri_wikipedia=uri_wikipedia, typ_vazby="exactMatch", overeni=True)
             link.save()
-    
+
+def calculate_hierarchy_record_count():
+    pass
 
 
 def make_skos():
