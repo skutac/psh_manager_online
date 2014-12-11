@@ -134,7 +134,7 @@ margin-top: 15px;
 padding-left: 30px;
 }
 
-.clickable{
+.list li{
 list-style-image: url('../img/1.gif');
 }
 
@@ -310,66 +310,22 @@ cursor: pointer;
 font-weight: bold;
 }
 
-
-* jQuery UI Autocomplete 1.8.10
- *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
- *
- * http://docs.jquery.com/UI/Autocomplete#theming
- */
-.ui-autocomplete { position: absolute; cursor: default; }	
-
-/* workarounds */
-* html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
-
-/*
- * jQuery UI Menu 1.8.10
- *
- * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
- *
- * http://docs.jquery.com/UI/Menu#theming
- */
-.ui-menu {
-	list-style:none;
-	display:block;
-	float: left;
-        background-color: white;
-        border-left: solid #7A7778 1px;
-        border-right: solid #7A7778 1px;
-        border-bottom: solid #7A7778 1px;
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        padding:0;
-        font-size: 13px;
-        cursor: pointer;
-}
-.ui-menu .ui-menu {
-	margin-top: -3px;
-}
-.ui-menu .ui-menu-item {
-        padding-bottom: 2px;
-	zoom: 1;
-	float: left;
-	clear: left;
-	width: 100%;
-}
-.ui-menu .ui-menu-item a {
-	text-decoration:none;
-	display:block;
-        padding-left: 8px;
-	zoom:1;
-        color: #8C8889;
-}
-.ui-menu .ui-menu-item a.ui-state-hover,
-.ui-menu .ui-menu-item a.ui-state-active {
-	font-weight: bolder;
-        background-color: #E3DEE0;
-        border-left: solid #7A7778 1px;
-        border-right: solid #7A7778 1px;
-	margin: -1px;
+a.blank_target{
+  text-decoration: none;
 }
 
+a.blank_target:hover{
+        font-weight: bold;
+}
+
+@media print {
+    #scrollDiv, #nav, #last_update, #wikipedia {display: none}
+    table {width:15cm}
+    table ul {margin:5px; padding-left: 5px; background-color: white}
+    li {font-size:small; padding-left:5px}
+    #concept, #content {margin: 2px}
+    #narrower, #related, #broader, #nonprefCS, #nonprefEN {margin-top: 2px; padding: 2px}
+    #titleCS, #titleEN {font-size:large}
+    .title, #pshID {font-weight: normal; font-size: small; margin-top: 5px}
+    .clickable {list-style-image:none}
+}

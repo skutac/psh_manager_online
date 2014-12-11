@@ -1,5 +1,7 @@
 var currentSuggested = $('#suggestedSubjects li.hidden');
 var screenheight = screen.height;
+var blank = false;
+
 $(document).ready(function(){
     $('#scrollDiv, #scrollable').css('height', (screenheight-200));
     $('#mainTree').load('static/html/tree.html', function(){
@@ -39,40 +41,82 @@ $(document).ready(function(){
         }
       }}
       highlight(current);
-});
-    
-$("#search").delegate('#pshSuggest', 'keyup', function(event){
-    var textInput = $(this).val();
-    if(textInput.length > 1){
-        var english = $('#english').attr('class');
-        var keycode = (event.keyCode ? event.keyCode : event.which);
-        if(keycode == '13'){
-            var subject = $(this).val();
-            getSuggestedSubject(subject);
+    });
+        
+    $("#search").on('keyup', '#pshSuggest', function(event){
+        var textInput = $(this).val();
+
+        if(textInput.length > 1){
+            var english = $('#english').attr('class');
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                var subject = $(this).val();
+                getSuggestedSubject(subject);
+            }
+            $.ajax({type : "POST",
+                   url : "suggest",
+                   datatype: "json",
+                   success: function(data){
+                          $("#pshSuggest").autocomplete({source: data});
+                    },
+                   data : {'input': textInput, 'en': english}
+            });
         }
-        $.ajax({type : "POST",
-               url : "suggest",
-               datatype: "json",
-               success: function(data){
-                      $("#pshSuggest").autocomplete({source: data});},
-               data : {'input': textInput, 'en': english}
-        });
-    }
-    else{
-        $("#suggestedSubjects").html("");
-    }
+        else{
+            $("#suggestedSubjects").html("");
+        }
+    });
+
+    $("body").on("click", ".blank_target", function(evt){
+      var pshid = $(this).parent().prev("span").attr("itemid");
+      window.open("/#!" + pshid);
+      evt.preventDefault();
+      return false;
+    });
+
+    $("body").on("click", ".heslo", function(){
+        var subjectID = $(this).attr("itemid");
+        if(!(subjectID)){
+          subjectID = $(this).attr("id");
+        }
+        window.location.hash = "!" + subjectID;
+        hashchange();
+        return false;
+    });
+
+    // $(window).bind("hashchange", function(evt){
+    //     var split = window.location.hash.split("#!")
+    //     if (split.length == 1){
+    //       return
+    //     }
+    //     else{
+    //       subjectID = split[1];
+    //       var current = $("#" + subjectID);
+    //       var subject = current.text();
+    //       getConcept(subjectID);
+    //       saveToCache(subject, subjectID);
+    //       unwrap(current);
+    //       highlight(current);
+    //     }       
+    // });
+
+    $('#english').click(function(){
+      var mode = $(this).attr('class');
+      if(mode == "inactive"){
+          $(this).css('opacity', '0.9');
+          $(this).attr('class', 'active');
+          $('#searchLanguage').text('angličitna');
+      }
+      else{
+          $(this).css('opacity', '0.2');
+          $(this).attr('class', 'inactive');
+          $('#searchLanguage').text('čeština');
+      }
+    });
+
 });
 
-$("body").delegate(".heslo", "click", function(){
-    var subjectID = $(this).attr("itemid");
-    if(!(subjectID)){
-      subjectID = $(this).attr("id");
-    }
-    window.location.hash = "!" + subjectID;
-    return false;
-});
-
-$(window).bind("hashchange", function(){
+function hashchange(){
   var split = window.location.hash.split("#!")
   if (split.length == 1){
     return
@@ -85,34 +129,28 @@ $(window).bind("hashchange", function(){
     saveToCache(subject, subjectID);
     unwrap(current);
     highlight(current);
-  }
-   
-});
-
-});
+  }   
+};
 
 function getSuggestedSubject(subject){
     var english = $('#english').attr('class');
     $.ajax({type : "POST",
-               url : "getID",
-               success: function(subjectID){
-                        if(subjectID == "None"){
-                            $('#pshSuggest').val("");
-                            $('ul.ui-autocomplete').hide();
-                            getSearchResult(subject, english);
+       url : "getID",
+       success: function(subjectID){
+        if(subjectID == "None"){
+          $('#pshSuggest').val("");
+          $('ul.ui-autocomplete').hide();
+          getSearchResult(subject, english);
 			    window.location.hash = "";
-                        }
-                        else{
-                            var current = $('#' + subjectID);
-			    window.location.hash = "!" + subjectID;
-//                             getConcept(subjectID);
-//                             saveToCache(subject, subjectID);
-//                             unwrap(current);
-//                             highlight(current);
-                            $('#pshSuggest').val("");
-                        }
-                       }, 
-               data : {'input': subject, 'en': english}
+        }
+        else{
+          var current = $('#' + subjectID);
+	        window.location.hash = "!" + subjectID;
+          $('#pshSuggest').val("");
+          hashchange();
+        }
+       }, 
+       data : {'input': subject, 'en': english}
     });
 }
 
@@ -128,26 +166,12 @@ function getSearchResult(subject, english){
       });
 }
 
-$('.ui-menu-item a').live('click', function(){
+$('.ui-menu-item a').click(function(){
     var subject = $(this).text();
     getSuggestedSubject(subject);
 });
 
-$('#english').live('click', function(){
-    var mode = $(this).attr('class');
-    if(mode == "inactive"){
-        $(this).css('opacity', '0.9');
-        $(this).attr('class', 'active');
-        $('#searchLanguage').text('angličitna');
-    }
-    else{
-        $(this).css('opacity', '0.2');
-        $(this).attr('class', 'inactive');
-        $('#searchLanguage').text('čeština');
-    }
-});
-
-$('.clickable').live('click', function() {
+$('.clickable').click(function() {
       var subjectID = $(this).attr('itemid');
       var subject = $(this).text();
       var current = $('#' + subjectID);
@@ -155,9 +179,11 @@ $('.clickable').live('click', function() {
       saveToCache(subject, subjectID);
       unwrap(current);
       highlight(current);
+      hashchange();
+
 });
 
-$('#cacheList li').live('click', function() {
+$('#cacheList li').click(function() {
     var subjectID = $(this).attr('itemid');
     var current = $('#' + subjectID);
     getConcept(subjectID);
@@ -205,11 +231,14 @@ function getConcept(subjectID){
     $.ajax({type : 'POST',
               url : './getConcept', 
               success: function(concept){
-                       $('#concept').html(concept).hide();
-                       checkWikipedia(subjectID);
-                       setMARCLink();
-                       $('#concept').fadeIn('slow');
-                       },
+                var table = $(concept);
+                 $('#concept').html(table).hide();
+                 checkWikipedia(subjectID);
+                 setMARCLink();
+                 $('#concept').fadeIn('slow');
+                 var title = table.find("#titleCS > span").text();
+                 $("title").text(title);
+               },
               data : {subjectID : subjectID}
       });
 }
@@ -243,7 +272,6 @@ function checkWikipedia(subjectID){
               url: 'wikipedia',
               data : {subjectID: subjectID},
               success: function(msg){
-//                   console.log("---- Get wikipedia link:" + msg + " ----");
                   if(msg != ""){
                     logoWikipedia.removeAttr('class');
                     logoWikipedia.css('opacity', '1');

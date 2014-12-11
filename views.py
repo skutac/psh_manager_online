@@ -20,8 +20,8 @@ conceptTable = u"""
             <table>
             <tr>
             <td>
-            <div id='titleCS'>%s<sup id="acronym">%s</sup></div>
-            <div id='titleEN'>%s</div>
+            <div id='titleCS'><span>%s</span><sup id="acronym">%s</sup></div>
+            <div id='titleEN'><span>%s</span></div>
             <div id='pshID' data-sysno="%s">%s</div>
             </td>
             </tr>
@@ -40,7 +40,7 @@ conceptTable = u"""
             <tr>
             <td>
             <div class="title">Příbuzná hesla</div>
-            <ul id='related'>%s</ul>
+            <ul class="list" id='related'>%s</ul>
             </td>
             </tr>
             </table>
@@ -50,13 +50,13 @@ conceptTable = u"""
             <tr>
             <td>
             <div class="title">Nadřazené heslo</div>
-            <ul id="broader">%s</ul>
+            <ul class="list" id="broader">%s</ul>
             </td>
             </tr>
             <tr>
             <td>
             <div class="title">Podřazená hesla</div>
-            <ul id='narrower'>%s</ul>
+            <ul class="list" id='narrower'>%s</ul>
             </td>
             </tr>
             </table>
@@ -233,13 +233,13 @@ def getConceptFromDB(subjectID):
             narrower = []
             if len(narrowerObj) > 0:
                 for narrow in narrowerObj:
-                        narrower.append(u"<li itemid='%s' class='clickable heslo'>%s</li>"%(narrow.id_heslo, narrow.heslo))
+                        narrower.append(u"<li><span itemid='%s' class='clickable heslo'>%s</span>  <sup><a href='/#!%s' class='blank_target' target=blank>>></a></sup></li>"%(narrow.id_heslo, narrow.heslo, narrow.id_heslo))
             else:
                 narrower = none
                 
             try:
                 broader = Hierarchie.objects.get(podrazeny=subjectID)
-                broader = u"<li itemid='%s' class='clickable heslo'>%s</li>"%(broader.nadrazeny ,Hesla.objects.get(id_heslo=broader.nadrazeny).heslo)
+                broader = u"<li><span itemid='%s' class='clickable heslo'>%s</span>  <sup><a href='/#!%s' class='blank_target' target=blank>>></a></sup></li>"%(broader.nadrazeny ,Hesla.objects.get(id_heslo=broader.nadrazeny).heslo, broader.nadrazeny)
             except:
                 broader = none
             
@@ -265,7 +265,7 @@ def getConceptFromDB(subjectID):
             related = []
             if len(relatedObj) > 0:
                 for obj in relatedObj:
-                    related.append(u"<li itemid='%s' class='clickable heslo'>%s</li>"%(obj.id_heslo, obj.heslo))
+                    related.append(u"<li><span itemid='%s' class='clickable heslo'>%s</span>  <sup><a href='/#!%s' class='blank_target' target=blank>>></a></sup></li>"%(obj.id_heslo, obj.heslo, obj.id_heslo))
             else:
                 related = none
             return conceptTable%(titleCS, acronym, titleEN, sysno, subjectID, "".join(nonprefCS), "".join(nonprefEN), "".join(related), broader, "".join(narrower))
